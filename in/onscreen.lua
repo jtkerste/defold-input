@@ -124,11 +124,23 @@ function M.create(config)
 	end
 
 	local function find_control_for_xy(x, y)
+		-- account for z-ordering
+		local highest_z = -10.0
+		local highest_node = nil
+		local highest_control = nil
+		
 		for node,control in pairs(controls) do
 			if gui.pick_node(node, x, y) then
-				return control, node
+				if control.start_position.z > highest_z then
+					highest_z = control.start_position.z
+					highest_control = control
+					highest_node = node
+					print("new high z: " .. highest_z)
+				end
 			end
 		end
+
+		return highest_control, highest_node
 	end
 
 	local function find_control_for_touch_index(touch_index)
